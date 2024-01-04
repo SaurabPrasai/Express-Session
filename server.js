@@ -27,10 +27,15 @@ app.use(express.urlencoded({extended:false}))
 //express session
 app.use(session({
     secret:"My secret key",
-    resave:false, 
+    resave:true,  //resave the session id even it is not modified 
     saveUninitialized:false,
-    store:store
+    rolling:true, //rolling true sets after each requesh the maxAge is added to the current time
+    store:store,
+    cookie:{
+        maxAge:1000*60   //cookie expires in every 60 sec of inactivity
+    }
 }))
+
 
 const isAuth=(req,res,next)=>{
     if(req.session.isAuth){
@@ -73,8 +78,8 @@ app.post('/api/login',async(req,res)=>{
    } catch (error) {
     console.log(error);
    }
-
 })
+
 app.post('/api/signup',async(req,res)=>{
 const {username,email,password}=req.body;
 let user;
